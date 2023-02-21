@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 // Load helpers.
 import CSVtoJSON from './helpers/CSVtoJSON.js';
-import ChartLine from './components/ChartBarLine.jsx';
+import ChartBarLine from './components/ChartBarLine.jsx';
 
 import '../styles/styles.less';
 
@@ -11,19 +11,16 @@ function Figure1() {
   const [dataFigure, setDataFigure] = useState(false);
 
   const cleanData = (data) => data.map((el, i) => {
-    const divider = (i === 0) ? 1000000 : 1000;
     const labels = Object.keys(el).filter(val => val !== 'Name').map(val => Date.UTC(parseInt(val, 10), 0, 1));
-    const values = Object.values(el).map(val => (parseFloat(val) / divider)).filter(val => !Number.isNaN(val));
+    const values = Object.values(el).map(val => (parseFloat(val))).filter(val => !Number.isNaN(val));
 
     return ({
       data: values.map((e, j) => ({
         x: labels[j],
-        y: e,
-        dataLabels: {
-          y: (i === 0 && j === 0) ? -10 : (i === 1 && j === 0) ? 30 : (i === 0) ? 40 : -10
-        }
+        y: e
       })),
       name: el.Name,
+      type: (i === 0) ? 'column' : 'line',
       yAxis: i
     });
   });
@@ -47,14 +44,14 @@ function Figure1() {
   return (
     <div className="app">
       {dataFigure && (
-      <ChartLine
+      <ChartBarLine
         idx="1"
         data={dataFigure}
-        note="Total plastics trade has been aggregated across five stages of the life-cycle of plastics: primary forms of plastics, intermediate forms of plastics, intermediate manufactured plastic products, final manufactured plastic products, and plastic waste. The hierarchy table used for the aggregation of Harmonized-System six-digit is available on the UNCTADstat Classifications website."
-        source="UNCTADstat based on calculations using UN Comtrade"
-        subtitle="Value and volume of global plastic goods exports between 2005 and 2021, billions of US dollars, millions of metric tons"
+        note="The data reflects the current list of 46 Least Developed Countries; figures for 2022 and 2023 are preliminary."
+        source="International Debt Statistics database"
+        subtitle="Debt service on external debt, total (Billion US$) and Total debt service (% of exports of goods, services and primary income)"
         suffix=""
-        title="The soaring global plastics trade"
+        title="Soaring debt burden jeopardizes recovery of least developed countries"
         ylabel=""
       />
       )}

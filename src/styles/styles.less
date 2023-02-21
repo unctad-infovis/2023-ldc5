@@ -2,8 +2,41 @@
 
 @import 'colors.less';
 
-#app-root-2023-ldc5 .app {
+.app-root-2023-ldc5 .app {
   font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  .chart_container {
+    margin: 40px 5px;
+    min-height: 650px;
+    .chart {
+      opacity: 0;
+      transition-duration: 500ms;
+      transition-property: opacity;
+      .tooltip_container {
+        .tooltip_header {
+          color: #000;
+          font-size: 20px;
+          line-height: 22px;
+          margin: 0 0 5px 0;
+        }
+        .tooltip_label {
+          font-size: 18px;
+          font-weight: 400;
+          line-height: 20px;
+        }
+        .tooltip_value {
+          font-size: 18px;
+          font-weight: 700;
+          line-height: 20px;
+        }
+      }
+      a {
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
 }
 
 @import 'basics.less';

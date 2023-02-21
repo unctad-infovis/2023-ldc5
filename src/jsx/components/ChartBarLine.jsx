@@ -42,11 +42,13 @@ Highcharts.SVGRenderer.prototype.symbols.download = (x, y, w, h) => {
   return path;
 };
 
-function LineChart({
+function BarLineChart({
   allow_decimals, data, idx, line_width, note, show_first_label, source, subtitle, suffix, title
 }) {
   const chartRef = useRef();
   const isVisible = useIsVisible(chartRef, { once: true });
+
+  console.log(data);
 
   const chartHeight = 700;
   const createChart = useCallback(() => {
@@ -59,7 +61,7 @@ function LineChart({
           fontFamily: 'Roboto',
           fontSize: '14px'
         },
-        text: `<em>Source:</em> <a href="https://unctadstat.unctad.org/wds/">${source}</a> ${note ? (`<br /><em>Note:</em> <span>${note}</span>`) : ''}`,
+        text: `<em>Source:</em> ${source} ${note ? (`<br /><em>Note:</em> <span>${note}</span>`) : ''}`,
         verticalAlign: 'bottom',
         x: 0
       },
@@ -68,23 +70,6 @@ function LineChart({
           load() {
             // eslint-disable-next-line react/no-this-in-sfc
             this.renderer.image('https://unctad.org/sites/default/files/2022-11/unctad_logo.svg', 5, 15, 80, 100).add();
-            setTimeout(() => {
-              // eslint-disable-next-line react/no-this-in-sfc
-              this.series.forEach((series) => {
-                series.points[series.points.length - 1].update({
-                  dataLabels: {
-                    enabled: true,
-                    y: series.points[series.points.length - 1].options.dataLabels.y
-                  }
-                });
-                series.points[0].update({
-                  dataLabels: {
-                    enabled: true,
-                    y: series.points[0].options.dataLabels.y
-                  }
-                });
-              });
-            }, 2800);
           }
         },
         height: chartHeight,
@@ -116,7 +101,6 @@ function LineChart({
           fontFamily: 'Roboto',
           fontWeight: 400
         },
-        type: 'line',
         zoomType: 'x'
       },
       colors: ['#009edb', '#72bf44'],
@@ -136,7 +120,7 @@ function LineChart({
       legend: {
         align: 'right',
         enabled: (data.length > 1),
-        itemDistance: 20,
+        itemDistance: 30,
         itemStyle: {
           color: '#000',
           cursor: 'default',
@@ -158,7 +142,7 @@ function LineChart({
             enabled: false,
             formatter() {
               // eslint-disable-next-line react/no-this-in-sfc
-              return `<span style="color: ${this.color}">${roundNr(this.y, 0).toLocaleString('en-US')}</div>`;
+              return `<span style="color: ${this.color}">${roundNr(this.y * 100, 0).toLocaleString('en-US')}</div>`;
             },
             style: {
               color: 'rgba(0, 0, 0, 0.8)',
@@ -167,6 +151,61 @@ function LineChart({
               fontWeight: 400,
               textOutline: '2px solid #fff'
             }
+          },
+          events: {
+            legendItemClick() {
+              return false;
+            },
+            mouseOver() {
+              return false;
+            }
+          },
+          selected: true,
+          lineWidth: line_width,
+          marker: {
+            enabled: false,
+            radius: 0,
+            states: {
+              hover: {
+                animation: false,
+                enabled: false,
+                radius: 8
+              }
+            },
+            symbol: 'circle'
+          },
+          states: {
+            hover: {
+              halo: {
+                size: 0
+              },
+              enabled: false,
+              lineWidth: line_width,
+            }
+          }
+        },
+        column: {
+          animation: {
+            duration: 3000,
+          },
+          cursor: 'pointer',
+          dataLabels: {
+            allowOverlap: false,
+            enabled: true,
+            formatter() {
+              // eslint-disable-next-line react/no-this-in-sfc
+              return `<span style="color: #fff}">${roundNr(this.y, 0).toLocaleString('en-US')}</div>`;
+            },
+            inside: true,
+            position: 'center',
+            style: {
+              color: '#fff',
+              fontFamily: 'Roboto',
+              fontSize: '18px',
+              fontWeight: 400,
+              textOutline: '0px solid #fff'
+            },
+            verticalAlign: 'top'
           },
           events: {
             legendItemClick() {
@@ -359,7 +398,7 @@ function LineChart({
             fontSize: '16px',
             fontWeight: 400
           },
-          text: 'Value',
+          text: 'Billion US$',
         },
         type: 'linear'
       }, {
@@ -368,6 +407,10 @@ function LineChart({
         gridLineDashStyle: 'shortdot',
         gridLineWidth: 1,
         labels: {
+          formatter() {
+            // eslint-disable-next-line react/no-this-in-sfc
+            return `${this.value * 100}`;
+          },
           reserveSpace: true,
           style: {
             color: '#72bf44',
@@ -378,6 +421,8 @@ function LineChart({
         },
         lineColor: 'transparent',
         lineWidth: 0,
+        max: 0.2,
+        min: 0,
         opposite: true,
         showFirstLabel: show_first_label,
         showLastLabel: true,
@@ -390,7 +435,7 @@ function LineChart({
             fontSize: '16px',
             fontWeight: 400
           },
-          text: 'Volume',
+          text: 'Percentage',
         },
         type: 'linear'
       }]
@@ -407,7 +452,7 @@ function LineChart({
   }, [createChart, isVisible]);
 
   return (
-    <div className="chart_container" style={{ marginBottom: '-20px' }}>
+    <div className="chart_container">
       <div ref={chartRef}>
         {(isVisible) && (<div className="chart" id={`chartIdx${idx}`} />)}
       </div>
@@ -416,7 +461,7 @@ function LineChart({
   );
 }
 
-LineChart.propTypes = {
+BarLineChart.propTypes = {
   allow_decimals: PropTypes.bool,
   data: PropTypes.instanceOf(Array).isRequired,
   idx: PropTypes.string.isRequired,
@@ -426,16 +471,16 @@ LineChart.propTypes = {
   source: PropTypes.string.isRequired,
   subtitle: PropTypes.string,
   suffix: PropTypes.string,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired
 };
 
-LineChart.defaultProps = {
+BarLineChart.defaultProps = {
   allow_decimals: true,
   line_width: 5,
   note: false,
   show_first_label: true,
   subtitle: false,
-  suffix: '',
+  suffix: ''
 };
 
-export default LineChart;
+export default BarLineChart;
