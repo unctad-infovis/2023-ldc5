@@ -21,6 +21,12 @@ function Figure1() {
       })),
       name: el.Name,
       type: (i === 0) ? 'column' : 'line',
+      zoneAxis: 'x',
+      zones: [{
+        value: Date.UTC(parseInt(2022, 10), 0, 1)
+      }, {
+        color: (i === 0) ? 'rgba(0, 158, 219, 0.4)' : '#009edb'
+      }],
       yAxis: i
     });
   });

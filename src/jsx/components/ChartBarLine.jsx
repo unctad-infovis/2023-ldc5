@@ -47,9 +47,6 @@ function BarLineChart({
 }) {
   const chartRef = useRef();
   const isVisible = useIsVisible(chartRef, { once: true });
-
-  console.log(data);
-
   const chartHeight = 700;
   const createChart = useCallback(() => {
     Highcharts.chart(`chartIdx${idx}`, {
@@ -216,19 +213,6 @@ function BarLineChart({
             }
           },
           selected: true,
-          lineWidth: line_width,
-          marker: {
-            enabled: false,
-            radius: 0,
-            states: {
-              hover: {
-                animation: false,
-                enabled: false,
-                radius: 8
-              }
-            },
-            symbol: 'circle'
-          },
           states: {
             hover: {
               halo: {
