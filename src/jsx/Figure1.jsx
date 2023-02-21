@@ -56,9 +56,9 @@ function Figure1() {
         data={dataFigure}
         note="The data reflects the current list of 46 Least Developed Countries; figures for 2022 and 2023 are preliminary."
         source="International Debt Statistics database"
-        subtitle="Debt service on external debt, total (Billion US$) and Total debt service (% of exports of goods, services and primary income)"
+        subtitle="Service on external debt, measured both in absolute terms and relative to exports of goods, services and primary income"
         suffix=""
-        title="Soaring debt burden jeopardizes recovery of least developed countries"
+        title="Soaring debt burdens in least developed countries raise distress risks"
         ylabel=""
       />
       )}
