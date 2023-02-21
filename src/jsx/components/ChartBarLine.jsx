@@ -43,7 +43,7 @@ Highcharts.SVGRenderer.prototype.symbols.download = (x, y, w, h) => {
 };
 
 function BarLineChart({
-  allow_decimals, data, idx, line_width, note, show_first_label, source, subtitle, suffix, title
+  allow_decimals, data, idx, line_width, note, show_first_label, source, subtitle, title
 }) {
   const chartRef = useRef();
   const isVisible = useIsVisible(chartRef, { once: true });
@@ -139,7 +139,7 @@ function BarLineChart({
             enabled: false,
             formatter() {
               // eslint-disable-next-line react/no-this-in-sfc
-              return `<span style="color: ${this.color}">${roundNr(this.y * 100, 0).toLocaleString('en-US')}</div>`;
+              return `<span style="color: ${this.color}">${roundNr(this.y, 0).toLocaleString('en-US')}</div>`;
             },
             style: {
               color: 'rgba(0, 0, 0, 0.8)',
@@ -308,9 +308,9 @@ function BarLineChart({
         crosshairs: true,
         formatter() {
           // eslint-disable-next-line react/no-this-in-sfc
-          const values = this.points.filter(point => point.series.name !== '').map(point => [point.series.name.split(' (')[0], point.y, point.color]);
+          const values = this.points.filter(point => point.series.name !== '').map(point => [point.series.name.split(' (')[0], point.y, point.color, point.series.options.unit]);
           const rows = [];
-          rows.push(values.map(point => `<div><span class="tooltip_label" style="color: ${point[2]}">${(point[0]) ? `${point[0]}: ` : ''}</span><span class="tooltip_value">${roundNr(point[1], 0).toLocaleString('en-US')}${suffix}</span></div>`).join(''));
+          rows.push(values.map(point => `<div><span class="tooltip_label" style="color: ${point[2]}">${(point[0]) ? `${point[0]}: ` : ''}</span><span class="tooltip_value">${roundNr(point[1], 0).toLocaleString('en-US')}${point[3]}</span></div>`).join(''));
           // eslint-disable-next-line react/no-this-in-sfc
           return `<div class="tooltip_container"><h3 class="tooltip_header">Year ${(new Date(this.x)).getFullYear()}</h3>${rows}</div>`;
         },
@@ -393,7 +393,7 @@ function BarLineChart({
         labels: {
           formatter() {
             // eslint-disable-next-line react/no-this-in-sfc
-            return `${this.value * 100}`;
+            return `${this.value}`;
           },
           reserveSpace: true,
           style: {
@@ -405,7 +405,7 @@ function BarLineChart({
         },
         lineColor: 'transparent',
         lineWidth: 0,
-        max: 0.2,
+        max: 20,
         min: 0,
         opposite: true,
         showFirstLabel: show_first_label,
@@ -425,7 +425,7 @@ function BarLineChart({
       }]
     });
     chartRef.current.querySelector(`#chartIdx${idx}`).style.opacity = 1;
-  }, [allow_decimals, data, idx, line_width, note, show_first_label, source, subtitle, suffix, title]);
+  }, [allow_decimals, data, idx, line_width, note, show_first_label, source, subtitle, title]);
 
   useEffect(() => {
     if (isVisible === true) {
@@ -454,7 +454,6 @@ BarLineChart.propTypes = {
   show_first_label: PropTypes.bool,
   source: PropTypes.string.isRequired,
   subtitle: PropTypes.string,
-  suffix: PropTypes.string,
   title: PropTypes.string.isRequired
 };
 
@@ -463,8 +462,7 @@ BarLineChart.defaultProps = {
   line_width: 5,
   note: false,
   show_first_label: true,
-  subtitle: false,
-  suffix: ''
+  subtitle: false
 };
 
 export default BarLineChart;

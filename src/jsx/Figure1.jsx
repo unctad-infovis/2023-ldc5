@@ -12,7 +12,7 @@ function Figure1() {
 
   const cleanData = (data) => data.map((el, i) => {
     const labels = Object.keys(el).filter(val => val !== 'Name').map(val => Date.UTC(parseInt(val, 10), 0, 1));
-    const values = Object.values(el).map(val => (parseFloat(val))).filter(val => !Number.isNaN(val));
+    const values = Object.values(el).map(val => (parseFloat((i === 1) ? val * 100 : val))).filter(val => !Number.isNaN(val) && val !== 0);
 
     return ({
       data: values.map((e, j) => ({
@@ -27,6 +27,7 @@ function Figure1() {
       }, {
         color: (i === 0) ? 'rgba(0, 158, 219, 0.4)' : '#009edb'
       }],
+      unit: (i === 0) ? ' Billion, US$' : ' %',
       yAxis: i
     });
   });
